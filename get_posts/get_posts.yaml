@@ -1,0 +1,23 @@
+﻿AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: Gets all posts from our dynamo DB table
+Resources:
+  PostReaderGetPosts:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: get_post.lambda_handler
+      Runtime: python2.7
+      CodeUri: .
+      Description: Gets all posts from our dynamo DB table
+      MemorySize: 128
+      Timeout: 3
+      Role: 'arn:aws:iam::606791903163:role/LambdaRuleForPolly'
+      Events:
+        Api1:
+          Type: Api
+          Properties:
+            Path: /
+            Method: GET
+      Environment:
+        Variables:
+          DB_TABLE_NAME: posts

@@ -1,0 +1,16 @@
+version: 0.1
+phases:
+  install:
+    commands:
+      - aws cloudformation package --template-file convert_to_audio/convert_to_audio.yaml --s3-bucket pollyapp2018
+                                   --output-template-file convert_to_audio_sam.yaml
+      - aws cloudformation package --template-file get_posts/get_posts.yaml --s3-bucket pollyapp2018
+                                   --output-template-file get_posts_sam.yaml
+      - aws cloudformation package --template-file new_post/new_post.yaml --s3-bucket pollyapp2018
+                                   --output-template-file new_post_sam.yaml
+artifacts:
+  type: zip
+  files:
+    - convert_to_audio/**/*
+    - outputSamTemplate/**/*
+    - new_post/**/*
