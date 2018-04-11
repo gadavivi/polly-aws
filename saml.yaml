@@ -1,0 +1,41 @@
+﻿AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Resources:
+  MyAPI:
+   Type: AWS::Serverless::Api
+   Properties:
+      StageName: prod
+      DefinitionBody:
+          'Fn::Transform':
+            Name: 'AWS::Include'
+            # Replace <bucket> with your bucket name
+            Parameters:
+              Location: s3://polly-package/swagger.yaml
+  posts:                   
+     Type: AWS::Serverless::SimpleTable
+     Properties:
+       PrimaryKey:
+         Name: id
+         Type: String
+       ProvisionedThroughput:
+         ReadCapacityUnits: 5
+         WriteCapacityUnits: 5
+  PostReaderGetPosts:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: get_post.lambda_handler
+      Runtime: python2.7
+      CodeUri: .
+      Description: Gets all posts from our dynamo DB table
+      MemorySize: 128
+      Timeout: 3
+      Events:
+        Api1:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MyAPI
+            Path: /
+            Method: GET
+      Environment:
+        Variables:
+            DB_TABLE_NAME: !Ref posts

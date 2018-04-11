@@ -1,16 +1,15 @@
-version: 0.1
-phases:
-  install:
-    commands:
-      - aws cloudformation package --template-file convert_to_audio/convert_to_audio.yaml --s3-bucket codepipeline-us-east-1-486228522700
-                                   --output-template-file convert_to_audio_sam.yaml
-      - aws cloudformation package --template-file get_posts/get_posts.yaml --s3-bucket codepipeline-us-east-1-486228522700
-                                   --output-template-file get_posts_sam.yaml
-      - aws cloudformation package --template-file new_post/new_post.yaml --s3-bucket codepipeline-us-east-1-486228522700
-                                   --output-template-file new_post_sam.yaml
-artifacts:
-  type: zip
-  files:
-    - convert_to_audio/**/*
-    - outputSamTemplate/**/*
-    - new_post/**/*
+version: 0.0
+environment_variables:
+    plaintext:
+        "INPUT_FILE": "saml.yaml"
+        "S3_BUCKET": ""
+containers:
+    LambdaFunctions:
+        phases:
+            during_build:
+                commands:
+                    - aws cloudformation package --template $INPUT_FILE --s3-bucket $S3_BUCKET --output-template post-saml.yaml
+        artifacts:
+            files:
+                - post-saml.yaml
+                - beta.json
