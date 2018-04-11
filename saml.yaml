@@ -8,7 +8,6 @@ Resources:
       DefinitionBody:
           'Fn::Transform':
             Name: 'AWS::Include'
-            # Replace <bucket> with your bucket name
             Parameters:
               Location: s3://polly-package/swagger.yaml
   posts:                   
@@ -20,6 +19,8 @@ Resources:
        ProvisionedThroughput:
          ReadCapacityUnits: 5
          WriteCapacityUnits: 5
+  SNSTopic1:
+    Type: 'AWS::SNS::Topic'
   PostReaderGetPosts:
     Type: 'AWS::Serverless::Function'
     Properties:
@@ -29,6 +30,7 @@ Resources:
       Description: Gets all posts from our dynamo DB table
       MemorySize: 128
       Timeout: 3
+      Role: 'arn:aws:iam::606791903163:role/LambdaRuleForPolly'
       Events:
         Api1:
           Type: Api
@@ -39,3 +41,29 @@ Resources:
       Environment:
         Variables:
             DB_TABLE_NAME: !Ref posts
+  PostReaderNewPost:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: new_post.lambda_handler
+      Runtime: python2.7
+      CodeUri: .
+      Description: add a new post to the db
+      MemorySize: 128
+      Timeout: 3
+      Role: 'arn:aws:iam::606791903163:role/LambdaRuleForPolly'
+      Events:
+        Api1:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MyAPI
+            Path: /
+            Method: POST
+        SNS1:
+            Type: SNS
+            Properties:
+                Topic:
+                    Ref: SNSTopic1
+      Environment:
+        Variables:
+            DB_TABLE_NAME: !Ref posts
+            SNS_TOPIC: !Ref SNSTopic1
