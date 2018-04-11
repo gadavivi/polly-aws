@@ -26,7 +26,7 @@ Resources:
     Properties:
       Handler: get_post.lambda_handler
       Runtime: python2.7
-      CodeUri: .
+      CodeUri: src
       Description: Gets all posts from our dynamo DB table
       MemorySize: 128
       Timeout: 3
@@ -46,24 +46,39 @@ Resources:
     Properties:
       Handler: new_post.lambda_handler
       Runtime: python2.7
-      CodeUri: .
+      CodeUri: src
       Description: add a new post to the db
       MemorySize: 128
       Timeout: 3
       Role: 'arn:aws:iam::606791903163:role/LambdaRuleForPolly'
       Events:
-        Api1:
+        Api2:
           Type: Api
           Properties:
             RestApiId: !Ref MyAPI
             Path: /
             Method: POST
-        SNS1:
-            Type: SNS
-            Properties:
-                Topic:
-                    Ref: SNSTopic1
       Environment:
         Variables:
             DB_TABLE_NAME: !Ref posts
             SNS_TOPIC: !Ref SNSTopic1
+  PostReaderConvertToAudio:
+        Type: 'AWS::Serverless::Function'
+        Properties:
+          Handler: convert_to_video.lambda_handler
+          Runtime: python2.7
+          CodeUri: src
+          Description: Converts my text to audio files and saves to s3
+          MemorySize: 128
+          Timeout: 300
+          Role: 'arn:aws:iam::606791903163:role/LambdaRuleForPolly'
+          Events:
+            SNS1:
+              Type: SNS
+              Properties:
+                Topic:
+                  Ref: SNSTopic1
+          Environment:
+            Variables:
+              BUCKET_NAME: polly-mp3s2018b
+              DB_TABLE_NAME: !Ref posts
