@@ -1,5 +1,9 @@
 ﻿AWSTemplateFormatVersion: '2010-09-09'
 Transform: 'AWS::Serverless-2016-10-31'
+Parameters:
+  S3Bucket:
+    Type: String
+    Description: "Amazon S3 bucket for AWS artifacts"
 Resources:
   PollyMp3S3:
     Type: AWS::S3::Bucket
@@ -30,7 +34,7 @@ Resources:
           'Fn::Transform':
             Name: 'AWS::Include'
             Parameters:
-              Location: s3://polly-package/swagger.yaml
+              Location: !Sub "s3://${S3Bucket}/swagger.yaml"
   posts:                   
      Type: AWS::Serverless::SimpleTable
      Properties:
