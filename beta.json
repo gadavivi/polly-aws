@@ -1,4 +1,5 @@
 {
     "Parameters": {
+		"S3Bucket": "serverless-app-606791903163-us-east-1-polly-aws-app"
     }
 }
