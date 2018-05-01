@@ -46,6 +46,42 @@ Resources:
          WriteCapacityUnits: 5
   SNSTopic1:
     Type: 'AWS::SNS::Topic'
+  LambdaRule:
+    Description: Allowing Lambda function to access all relevant services
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: LambdaRule
+      AssumeRolePolicyDocument:
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: [lambda.amazonaws.com]
+          Action: sts:AssumeRole
+      Path: /
+  LambdaPolicy:
+    Type: AWS::IAM::Policy
+    DependsOn: LambdaPolicy
+    Description: Setting IAM policy for LambdaRule role
+    Properties:
+      PolicyName: CodeBuildRolePolicy
+      PolicyDocument:
+        Statement:
+        - Effect: Allow
+          Action: ["logs:CreateLogGroup", "logs:CreateLogStream", "logs:PutLogEvents"]
+          Resource: ["*"]
+        - Effect: Allow
+          Resource: ["*"]
+          Action: ["dynamodb:Query","dynamodb:Scan","dynamodb:PutItem","dynamodb:UpdateItem"]
+        - Effect: Allow
+          Resource: ["*"]
+          Action: ["polly:SynthesizeSpeech"]
+        - Effect: Allow
+          Resource: ["*"]
+          Action: ["s3:GetBucketLocation", "s3:PutObject", "s3:PutObjectAcl"]
+        - Effect: Allow
+          Resource: ["*"]
+          Action: ["sns:Publish"]
+      Roles: [!Ref LambdaRule]
   PostReaderGetPosts:
     Type: 'AWS::Serverless::Function'
     Properties:
@@ -55,7 +91,7 @@ Resources:
       Description: Gets all posts from our dynamo DB table
       MemorySize: 128
       Timeout: 3
-      Role: 'arn:aws:iam::606791903163:role/LambdaRuleForPolly'
+      Role: !Ref LambdaRule
       Events:
         Api1:
           Type: Api
@@ -75,7 +111,7 @@ Resources:
       Description: add a new post to the db
       MemorySize: 128
       Timeout: 3
-      Role: 'arn:aws:iam::606791903163:role/LambdaRuleForPolly'
+      Role: !Ref LambdaRule
       Events:
         Api2:
           Type: Api
@@ -96,7 +132,7 @@ Resources:
           Description: Converts my text to audio files and saves to s3
           MemorySize: 128
           Timeout: 300
-          Role: 'arn:aws:iam::606791903163:role/LambdaRuleForPolly'
+          Role: !Ref LambdaRule
           Events:
             SNS1:
               Type: SNS
