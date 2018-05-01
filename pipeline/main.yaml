@@ -16,10 +16,6 @@ Parameters:
     Type: String
     Description: The filename for the output SAM file from the buildspec file.
     Default: post-saml.yaml
-  StagingFile:
-    Type: String
-    Description: The cloudformation staging file. Leave empty if no staging file is needed.
-    Default: beta.json
   CodeBuildImage:
     Type: String
     Default: "aws/codebuild/python:2.7.12"
@@ -53,7 +49,6 @@ Resources:
         AppName: !Ref AppName
         SAMInputFile: !Ref SAMInputFile
         SAMOutputFile: !Ref SAMOutputFile
-        StagingFile: !Ref StagingFile
         CodeBuildImage: !Ref CodeBuildImage
         GitHubRepoName: !Ref GitHubRepoName
         GitHubRepoBranch: !Ref GitHubRepoBranch
@@ -62,4 +57,4 @@ Resources:
         CodePipelineRole: !GetAtt ServerlessRoles.Outputs.CodePipelineRole
         CloudformationRole: !GetAtt ServerlessRoles.Outputs.CloudformationDeployRole
         CodeBuildRole: !GetAtt ServerlessRoles.Outputs.CodeBuildRole
-      TemplateURL: "https://s3-external-1.amazonaws.com/cf-templates-4jvbr6oc8y88-us-east-1/2018108L0L-pipeline.yamlth2vkywp1id"
+      TemplateURL: "https://s3-external-1.amazonaws.com/cf-templates-4jvbr6oc8y88-us-east-1/2018121vnR-pipeline.yamla2t67zzi745"

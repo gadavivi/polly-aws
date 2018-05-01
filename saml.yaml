@@ -4,6 +4,8 @@ Parameters:
   S3Bucket:
     Type: String
     Description: "Amazon S3 bucket for AWS artifacts"
+    Default: Fn::ImportValue: 
+                s3-bucket-code
 Resources:
   PollyMp3S3:
     Type: AWS::S3::Bucket

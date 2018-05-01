@@ -16,10 +16,6 @@ Parameters:
     Type: String
     Description: The filename for the output SAM file from the buildspec file.
     Default: post-saml.yaml
-  StagingFile:
-    Type: String
-    Description: The cloudformation staging file. Leave empty if no staging file is needed.
-    Default: beta.json
   CodeBuildImage:
     Type: String
     Default: "aws/codebuild/python:2.7.12"
@@ -47,10 +43,6 @@ Parameters:
   CodeBuildRole:
     Type: String
     Description: Role for code build
-Conditions:
-  HasStagingVariables:
-    !Not
-      - !Equals [!Ref StagingFile, ""]
 Resources:
   CodeBuildProject:
     DependsOn: [S3Bucket]
@@ -159,7 +151,6 @@ Resources:
             ChangeSetName: pipeline-changeset
             Capabilities: CAPABILITY_NAMED_IAM
             TemplatePath: !Sub "${AppName}-BuildArtifact::${SAMOutputFile}"
-            TemplateConfiguration: !If [ HasStagingVariables, !Sub "${AppName}-BuildArtifact::${StagingFile}", "" ]
           RunOrder: 1
         - Name: execute-changeset
           InputArtifacts: []
@@ -181,3 +172,5 @@ Outputs:
   S3Bucket:
     Description: "Amazon S3 bucket for AWS artifacts"
     Value: !Ref S3Bucket
+    Export:
+        Name: s3-bucket-code
