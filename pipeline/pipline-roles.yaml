@@ -72,10 +72,7 @@ Resources:
         - Action: ["apigateway:*"]
           Resource: !Sub "arn:aws:apigateway:${AWS::Region}::*"
           Effect: Allow
-        - Action: ["iam:GetRole", "iam:CreateRole", "iam:DeleteRole"]
-          Resource: !Sub "arn:aws:iam::${AWS::AccountId}:role/${AppName}-*"
-          Effect: Allow
-        - Action: ["iam:AttachRolePolicy", "iam:DetachRolePolicy"]
+        - Action: ["iam:GetRole", "iam:CreateRole", "iam:DeleteRole","iam:AttachRolePolicy", "iam:DetachRolePolicy","iam:DeleteRolePolicy","iam:PutRolePolicy"]
           Resource: !Sub "arn:aws:iam::${AWS::AccountId}:role/${AppName}-*"
           Effect: Allow
         - Action: ["iam:PassRole"]

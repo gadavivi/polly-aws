@@ -44,7 +44,7 @@ Resources:
     Properties:
       Parameters:
         AppName: !Ref AppName
-      TemplateURL: "https://s3-external-1.amazonaws.com/cf-templates-4jvbr6oc8y88-us-east-1/2018108qxE-pipline-roles.yamldunaihxn1b4"
+      TemplateURL: "https://s3-external-1.amazonaws.com/cf-templates-4jvbr6oc8y88-us-east-1/2018125y2Q-pipline-roles.yamlij6dylatqka"
   ServerlessPipeline:
     Type: "AWS::CloudFormation::Stack"
     DependsOn: [ServerlessRoles]

@@ -50,7 +50,7 @@ Resources:
     Description: Allowing Lambda function to access all relevant services
     Type: AWS::IAM::Role
     Properties:
-      RoleName: LambdaRule
+      RoleName: !Sub "${AWS::StackName}-lambda-rule"
       AssumeRolePolicyDocument:
         Statement:
         - Effect: Allow
@@ -60,10 +60,10 @@ Resources:
       Path: /
   LambdaPolicy:
     Type: AWS::IAM::Policy
-    DependsOn: LambdaPolicy
+    DependsOn: LambdaRule
     Description: Setting IAM policy for LambdaRule role
     Properties:
-      PolicyName: CodeBuildRolePolicy
+      PolicyName: !Sub "${AWS::StackName}-lambda-policy"
       PolicyDocument:
         Statement:
         - Effect: Allow
@@ -84,6 +84,7 @@ Resources:
       Roles: [!Ref LambdaRule]
   PostReaderGetPosts:
     Type: 'AWS::Serverless::Function'
+    DependsOn: LambdaRule
     Properties:
       Handler: get_post.lambda_handler
       Runtime: python2.7
@@ -91,7 +92,7 @@ Resources:
       Description: Gets all posts from our dynamo DB table
       MemorySize: 128
       Timeout: 3
-      Role: !Ref LambdaRule
+      Role: !GetAtt LambdaRule.Arn
       Events:
         Api1:
           Type: Api
@@ -104,6 +105,7 @@ Resources:
             DB_TABLE_NAME: !Ref posts
   PostReaderNewPost:
     Type: 'AWS::Serverless::Function'
+    DependsOn: LambdaRule
     Properties:
       Handler: new_post.lambda_handler
       Runtime: python2.7
@@ -111,7 +113,7 @@ Resources:
       Description: add a new post to the db
       MemorySize: 128
       Timeout: 3
-      Role: !Ref LambdaRule
+      Role: !GetAtt LambdaRule.Arn
       Events:
         Api2:
           Type: Api
@@ -125,6 +127,7 @@ Resources:
             SNS_TOPIC: !Ref SNSTopic1
   PostReaderConvertToAudio:
         Type: 'AWS::Serverless::Function'
+        DependsOn: LambdaRule
         Properties:
           Handler: convert_to_video.lambda_handler
           Runtime: python2.7
@@ -132,7 +135,7 @@ Resources:
           Description: Converts my text to audio files and saves to s3
           MemorySize: 128
           Timeout: 300
-          Role: !Ref LambdaRule
+          Role: !GetAtt LambdaRule.Arn
           Events:
             SNS1:
               Type: SNS
