@@ -1,4 +1,4 @@
-var API_ENDPOINT = "https://ppa8no7nq6.execute-api.us-east-1.amazonaws.com/prod"
+var API_ENDPOINT = "PUT_HERE_THE_APN_URI/prod"
 
 document.getElementById("sayButton").onclick = function(){
 
